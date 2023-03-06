@@ -1,11 +1,13 @@
 package tictactoe;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.lang.*;
 
 public class Main {
     public static void main(String[] args) {
         // write your code here
         Scanner scanner = new Scanner(System.in);
-        String grid = scanner.next();
+        String grid = scanner.nextLine();
         char[][] array = new char[3][3];
         int counter = 0;
 
@@ -20,8 +22,35 @@ public class Main {
             System.out.println("|");
         }
         System.out.println("---------");
-
-        checkScore(array);
+        boolean continueTurn = true;
+        do {
+            String coordinates = scanner.nextLine();
+            if (!coordinates.matches("[0-9 ]+")) {
+                System.out.println("You should enter numbers!");
+            } else {
+                String[] coordinateArray = coordinates.split(" ");
+                int y = Integer.parseInt(coordinateArray[0]);
+                int x = Integer.parseInt(coordinateArray[1]);
+                if (y < 1 || y > 3 || x < 1 || x > 3){
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else if (array[y-1][x-1] == 'X' || array[y-1][x-1] == 'O') {
+                    System.out.println("This cell is occupied! Choose another one!");
+                } else {
+                    array [y-1][x-1] = 'X';
+                    System.out.println("---------");
+                    for (int i = 0; i < 3; i++) {
+                        System.out.print("| ");
+                        for (int j = 0; j < 3; j++) {
+                            System.out.print(array[i][j] + " ");
+                        }
+                        System.out.println("|");
+                    }
+                    System.out.println("---------");
+                    continueTurn = false;
+                }
+            }
+            //checkScore(array);
+        } while (continueTurn);
     }
 
     public static void checkScore(char[][] array) {
