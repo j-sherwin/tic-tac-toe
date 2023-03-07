@@ -4,39 +4,51 @@ import java.util.Scanner;
 
 
 public class Main {
+    static boolean continueTurn = true;
+    static String coordinates;
+    static char[][] array = new char[3][3];
+
     public static void main(String[] args) {
         // write your code here
-        Scanner scanner = new Scanner(System.in);
-        String grid = scanner.nextLine();
-        char[][] array = new char[3][3];
-        int counter = 0;
-
         System.out.println("---------");
         for (int i = 0; i < 3; i++) {
             System.out.print("| ");
             for (int j = 0; j < 3; j++) {
-                array[i][j] = grid.charAt(counter);
-                counter++;
+                array[i][j] = ' ';
                 System.out.print(array[i][j] + " ");
             }
             System.out.println("|");
         }
         System.out.println("---------");
-        boolean continueTurn = true;
+
         do {
-            String coordinates = scanner.nextLine();
+            if (continueTurn) {
+                userTurn('X');
+            }
+            if (continueTurn) {
+                userTurn('O');
+            }
+        } while (continueTurn);
+
+    }
+
+    public static void userTurn(char xo) {
+        Scanner scanner = new Scanner(System.in);
+        boolean inputAccepted = false;
+        do {
+            coordinates = scanner.nextLine();
             if (!coordinates.matches("[0-9 ]+")) {
                 System.out.println("You should enter numbers!");
             } else {
                 String[] coordinateArray = coordinates.split(" ");
                 int y = Integer.parseInt(coordinateArray[0]);
                 int x = Integer.parseInt(coordinateArray[1]);
-                if (y < 1 || y > 3 || x < 1 || x > 3){
+                if (y < 1 || y > 3 || x < 1 || x > 3) {
                     System.out.println("Coordinates should be from 1 to 3!");
-                } else if (array[y-1][x-1] == 'X' || array[y-1][x-1] == 'O') {
+                } else if (array[y - 1][x - 1] == 'X' || array[y - 1][x - 1] == 'O') {
                     System.out.println("This cell is occupied! Choose another one!");
                 } else {
-                    array [y-1][x-1] = 'X';
+                    array[y - 1][x - 1] = xo;
                     System.out.println("---------");
                     for (int i = 0; i < 3; i++) {
                         System.out.print("| ");
@@ -46,17 +58,16 @@ public class Main {
                         System.out.println("|");
                     }
                     System.out.println("---------");
-                    continueTurn = false;
+                    checkScore(array);
+                    inputAccepted = true;
                 }
             }
-            //checkScore(array);
-        } while (continueTurn);
+        } while (!inputAccepted);
     }
 
     public static void checkScore(char[][] array) {
         int xCount = 0;
         int oCount = 0;
-
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (array[i][j] == 'X') {
@@ -67,7 +78,6 @@ public class Main {
                 }
             }
         }
-        boolean emptyCells = xCount + oCount != 9;
         boolean xWins = false;
         boolean oWins = false;
 
@@ -107,16 +117,17 @@ public class Main {
             oWins = true;
         }
 
-        if (oWins && xWins || xCount - oCount > 1 || oCount - xCount > 1) {
-            System.out.println("Impossible");
-        } else if (!oWins && !xWins && emptyCells) {
-            System.out.println("Game not finished");
-        } else if (oWins) {
+        if (oWins) {
             System.out.println("O wins");
-        } else if (xWins) {
+            continueTurn = false;
+        }
+        if (xWins) {
             System.out.println("X wins");
-        } else {
+            continueTurn = false;
+        }
+        if (!xWins && !oWins && xCount + oCount == 9) {
             System.out.println("Draw");
+            continueTurn = false;
         }
     }
 
